@@ -1,5 +1,7 @@
-﻿using ContaCorrente.API.Application.Commands;
+﻿using BankMore.Domain.Enums;
+using ContaCorrente.API.Application.Commands;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ContaCorrente.API.Controllers
@@ -35,6 +37,23 @@ namespace ContaCorrente.API.Controllers
                 return Unauthorized(new { result.Message, result.ErrorType });
 
             return Ok(new { token = result.Data });
+        }
+
+        [HttpPut("inativar")]
+        [Authorize]
+        public async Task<IActionResult> Inativar([FromBody] InativarContaCommand command)
+        {
+            var result = await _mediator.Send(command);
+
+            if (!result.IsSuccess)
+            {
+                if (result.ErrorType == ErrorType.USER_UNAUTHORIZED.ToString())
+                    return Forbid();
+
+                return BadRequest(new { result.Message, result.ErrorType });
+            }
+
+            return NoContent();
         }
     }
 }

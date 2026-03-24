@@ -6,5 +6,7 @@
         Task<bool> ExistePorCpf(string cpf);
         Task<Entities.ContaCorrente?> ObterPorCpf(string cpf);
         Task<Entities.ContaCorrente?> ObterPorNumero(int numero);
+        Task<Entities.ContaCorrente?> ObterPorId(string id);
+        Task Inativar(string id);
     }
 }

@@ -77,5 +77,32 @@ namespace ContaCorrente.API.Infrastructure.Repositories
 
             return await connection.QueryFirstOrDefaultAsync<Domain.Entities.ContaCorrente?>(sql, new { Numero = numero });
         }
+
+        public async Task<Domain.Entities.ContaCorrente?> ObterPorId(string id)
+        {
+            var sql = @"SELECT idcontacorrente AS Id,
+                               numero AS Numero,
+                               nome AS Nome,
+                               ativo AS Ativo,
+                               senha AS Senha,
+                               salt AS Salt
+                          FROM contacorrente
+                         WHERE idcontacorrente = @Id";
+
+            using var connection = _connection.CreateConnection();
+
+            return await connection.QueryFirstOrDefaultAsync<Domain.Entities.ContaCorrente?>(sql, new { Id = id });
+        }
+
+        public async Task Inativar(string id)
+        {
+            var sql = @"UPDATE contacorrente
+                           SET ativo = 0
+                         WHERE idcontacorrente = @Id";
+
+            using var connection = _connection.CreateConnection();
+
+            await connection.ExecuteAsync(sql, new { Id = id });
+        }
     }
 }
