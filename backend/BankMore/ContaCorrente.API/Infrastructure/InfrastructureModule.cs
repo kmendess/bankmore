@@ -45,6 +45,8 @@ namespace ContaCorrente.API.Infrastructure
             services.AddScoped<IContaCorrenteRepository, ContaCorrenteRepository>();
             services.AddScoped<IPasswordService, PasswordService>();
             services.AddScoped<IJwtService, JwtService>();
+            services.AddScoped<IMovimentoRepository, MovimentoRepository>();
+            services.AddScoped<IIdempotenciaRepository, IdempotenciaRepository>();
 
             return services;
         }

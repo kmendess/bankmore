@@ -55,5 +55,22 @@ namespace ContaCorrente.API.Controllers
 
             return NoContent();
         }
+
+        [HttpPost("movimentar")]
+        [Authorize]
+        public async Task<IActionResult> Movimentar([FromBody] MovimentarContaCommand command)
+        {
+            var result = await _mediator.Send(command);
+
+            if (!result.IsSuccess)
+            {
+                if (result.ErrorType == ErrorType.USER_UNAUTHORIZED.ToString())
+                    return Forbid();
+
+                return BadRequest(new { result.Message, result.ErrorType });
+            }
+
+            return NoContent();
+        }
     }
 }
