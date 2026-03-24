@@ -14,10 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Application\Queries\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\BankMore.Application\BankMore.Application.csproj" />
     <ProjectReference Include="..\BankMore.Domain\BankMore.Domain.csproj" />
     <ProjectReference Include="..\BankMore.Infrastructure\BankMore.Infrastructure.csproj" />

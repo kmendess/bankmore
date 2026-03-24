@@ -31,5 +31,19 @@ namespace ContaCorrente.API.Infrastructure.Repositories
                 movimento.Valor
             });
         }
+
+        public async Task<decimal> ObterSaldo(string idContaCorrente)
+        {
+            var sql = @"SELECT 
+                             COALESCE(SUM(CASE WHEN tipomovimento = 'C' THEN valor ELSE 0 END), 0) -
+                             COALESCE(SUM(CASE WHEN tipomovimento = 'D' THEN valor ELSE 0 END), 0)
+                         FROM movimento
+                        WHERE idcontacorrente = @Id";
+
+            using var connection = _connection.CreateConnection();
+
+            var saldo = await connection.ExecuteScalarAsync<decimal?>(sql, new { Id = idContaCorrente });
+            return saldo ?? 0;
+        }
     }
 }

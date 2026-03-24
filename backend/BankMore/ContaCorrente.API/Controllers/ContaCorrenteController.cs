@@ -1,5 +1,6 @@
 ﻿using BankMore.Domain.Enums;
 using ContaCorrente.API.Application.Commands;
+using ContaCorrente.API.Application.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -71,6 +72,23 @@ namespace ContaCorrente.API.Controllers
             }
 
             return NoContent();
+        }
+
+        [HttpGet("saldo")]
+        [Authorize]
+        public async Task<IActionResult> ObterSaldo()
+        {
+            var result = await _mediator.Send(new ObterSaldoQuery());
+
+            if (!result.IsSuccess)
+            {
+                if (result.ErrorType == ErrorType.USER_UNAUTHORIZED.ToString())
+                    return Forbid();
+
+                return BadRequest(new { result.Message, result.ErrorType });
+            }
+
+            return Ok(result.Data);
         }
     }
 }
