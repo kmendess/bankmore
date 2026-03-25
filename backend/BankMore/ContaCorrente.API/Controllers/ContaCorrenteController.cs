@@ -90,5 +90,39 @@ namespace ContaCorrente.API.Controllers
 
             return Ok(result.Data);
         }
+
+        [HttpGet("current")]
+        [Authorize]
+        public async Task<IActionResult> ObterContaLogada()
+        {
+            var result = await _mediator.Send(new ObterContaPorIdQuery());
+
+            if (!result.IsSuccess)
+            {
+                if (result.ErrorType == ErrorType.USER_UNAUTHORIZED.ToString())
+                    return Forbid();
+
+                return NotFound(new { result.Message, result.ErrorType });
+            }
+
+            return Ok(result.Data);
+        }
+
+        [HttpGet("{numeroConta}")]
+        [Authorize]
+        public async Task<IActionResult> ObterContaPorNumero(int numeroConta)
+        {
+            var result = await _mediator.Send(new ObterContaPorNumeroQuery(numeroConta));
+
+            if (!result.IsSuccess)
+            {
+                if (result.ErrorType == ErrorType.USER_UNAUTHORIZED.ToString())
+                    return Forbid();
+
+                return NotFound(new { result.Message, result.ErrorType });
+            }
+
+            return Ok(result.Data);
+        }
     }
 }
