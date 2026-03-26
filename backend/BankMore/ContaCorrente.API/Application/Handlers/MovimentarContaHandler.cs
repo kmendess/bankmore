@@ -48,23 +48,20 @@ namespace ContaCorrente.API.Application.Handlers
             if (!contaLogada.Ativo)
                 return Response.Error(ErrorType.INACTIVE_ACCOUNT, "Conta inativa");
 
-            if (request.Valor <= 0)
-                return Response.Error(ErrorType.INVALID_VALUE, "Valor inválido");
-
-            if (request.Tipo != TipoMovimento.Credito.GetDescription() && 
-                request.Tipo != TipoMovimento.Debito.GetDescription())
-                return Response.Error(ErrorType.INVALID_TYPE, "Tipo de movimentação inválido");
-
-            if (request.NumeroConta == null)
-                return Response.Error(ErrorType.INVALID_ACCOUNT, "Conta de destino inválida");
-
-            var contaDestino = await _contaRepository.ObterPorNumero(request.NumeroConta.Value);
+            var contaDestino = await ObterContaCorrenteDestino(request, contaLogada);
 
             if (contaDestino == null)
                 return Response.Error(ErrorType.INVALID_ACCOUNT, "Conta de destino inválida");
 
             if (!contaDestino.Ativo)
                 return Response.Error(ErrorType.INACTIVE_ACCOUNT, "Conta de destino inativa");
+
+            if (request.Valor <= 0)
+                return Response.Error(ErrorType.INVALID_VALUE, "Valor inválido");
+
+            if (request.Tipo != TipoMovimento.Credito.GetDescription() &&
+                request.Tipo != TipoMovimento.Debito.GetDescription())
+                return Response.Error(ErrorType.INVALID_TYPE, "Tipo de movimentação inválido");
 
             if (contaDestino.Id != contaLogada.Id &&
                 request.Tipo != TipoMovimento.Credito.GetDescription())
@@ -85,6 +82,13 @@ namespace ContaCorrente.API.Application.Handlers
             );
 
             return Response.Success();
+        }
+
+        private async Task<Domain.Entities.ContaCorrente?> ObterContaCorrenteDestino(MovimentarContaCommand request, Domain.Entities.ContaCorrente contaLogada)
+        {
+            if (request.NumeroConta.HasValue)
+                return await _contaRepository.ObterPorNumero(request.NumeroConta.Value);
+            return contaLogada;
         }
     }
 }
