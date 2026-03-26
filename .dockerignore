@@ -1,0 +1,18 @@
+**/bin/
+**/obj/
+**/.vs/
+**/.vscode/
+**/*.user
+**/*.suo
+**/*.cache
+**/*.log
+**/node_modules/
+
+.git
+.gitignore
+docker-compose.yaml
+README.md
+
+# arquivos locais
+.env
+.env.*
