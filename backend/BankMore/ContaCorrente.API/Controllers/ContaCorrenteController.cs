@@ -19,6 +19,7 @@ namespace ContaCorrente.API.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Criar([FromBody] CriarContaCommand command)
         {
             var result = await _mediator.Send(command);
@@ -30,6 +31,7 @@ namespace ContaCorrente.API.Controllers
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginCommand command)
         {
             var result = await _mediator.Send(command);

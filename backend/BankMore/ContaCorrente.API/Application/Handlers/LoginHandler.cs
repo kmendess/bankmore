@@ -7,7 +7,7 @@ using MediatR;
 
 namespace ContaCorrente.API.Application.Handlers
 {
-    public class LoginHandler : IRequestHandler<LoginCommand, Response<string>>
+    public class LoginHandler : IRequestHandler<LoginCommand, Result<string>>
     {
         private readonly IContaCorrenteRepository _repository;
         private readonly IPasswordService _passwordService;
@@ -23,26 +23,33 @@ namespace ContaCorrente.API.Application.Handlers
             _jwtService = jwtService;
         }
 
-        public async Task<Response<string>> Handle(LoginCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
-            Domain.Entities.ContaCorrente conta = null;
+            var contaCorrente = await ObterContaCorrente(request);
 
-            if (!string.IsNullOrEmpty(request.Cpf))
-                conta = await _repository.ObterPorCpf(request.Cpf);
-            else if (request.NumeroConta.HasValue)
-                conta = await _repository.ObterPorNumero(request.NumeroConta.Value);
+            if (contaCorrente == null)
+                return Result<string>.Error(ErrorType.USER_UNAUTHORIZED, "Usuário não encontrado");
 
-            if (conta == null)
-                return Response<string>.Error(ErrorType.USER_UNAUTHORIZED, "Usuário não encontrado");
-
-            var senhaValida = _passwordService.Verify(request.Senha, conta.Senha);
+            var senhaValida = _passwordService.Verify(request.Senha, contaCorrente.Senha);
 
             if (!senhaValida)
-                return Response<string>.Error(ErrorType.USER_UNAUTHORIZED, "Senha inválida");
+                return Result<string>.Error(ErrorType.USER_UNAUTHORIZED, "Senha inválida");
 
-            var token = _jwtService.GenerateToken(conta.Id);
+            var token = _jwtService.GenerateToken(contaCorrente.Id);
 
-            return Response<string>.Success(token);
+            return Result<string>.Success(token);
+        }
+
+        private async Task<Domain.Entities.ContaCorrente?> ObterContaCorrente(LoginCommand request)
+        {
+            Domain.Entities.ContaCorrente? contaCorrente = null;
+
+            if (!string.IsNullOrEmpty(request.Cpf))
+                contaCorrente = await _repository.ObterPorCpf(request.Cpf);
+            else if (request.NumeroConta.HasValue)
+                contaCorrente = await _repository.ObterPorNumero(request.NumeroConta.Value);
+
+            return contaCorrente;
         }
     }
 }

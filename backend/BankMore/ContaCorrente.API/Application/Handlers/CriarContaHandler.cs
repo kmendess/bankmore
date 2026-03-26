@@ -7,7 +7,7 @@ using MediatR;
 
 namespace ContaCorrente.API.Application.Handlers
 {
-    public class CriarContaHandler : IRequestHandler<CriarContaCommand, Response<int>>
+    public class CriarContaHandler : IRequestHandler<CriarContaCommand, Result<int>>
     {
         private readonly IContaCorrenteRepository _repository;
         private readonly IPasswordService _passwordService;
@@ -20,20 +20,19 @@ namespace ContaCorrente.API.Application.Handlers
             _passwordService = passwordService;
         }
 
-        public async Task<Response<int>> Handle(CriarContaCommand request, CancellationToken cancellationToken)
+        public async Task<Result<int>> Handle(CriarContaCommand request, CancellationToken cancellationToken)
         {
-            request.Cpf = new string(request.Cpf.Where(char.IsDigit).ToArray());
+            request.Cpf = request.Cpf.Replace(".", "").Replace("-", "");
 
-            if (!CpfValido(request.Cpf))
-                return Response<int>.Error(ErrorType.INVALID_DOCUMENT, "CPF inválido");
+            var result = await ValidarCpf(request.Cpf)
+                .Then(() => ValidarSenha(request.Senha))
+                .Then(() => CriarConta(request));
 
-            var cpfJaCadastrado = await _repository.ExistePorCpf(request.Cpf);
-            if (cpfJaCadastrado)
-                return Response<int>.Error(ErrorType.INVALID_DOCUMENT, "CPF já cadastrado");
+            return result;
+        }
 
-            if (!SenhaValida(request.Senha))
-                return Response<int>.Error(ErrorType.INVALID_DOCUMENT, "Senha inválida");
-
+        private async Task<Result<int>> CriarConta(CriarContaCommand request)
+        {
             var conta = new Domain.Entities.ContaCorrente(
                 request.Cpf,
                 _passwordService.Hash(request.Senha)
@@ -41,15 +40,27 @@ namespace ContaCorrente.API.Application.Handlers
 
             await _repository.Criar(conta);
 
-            return Response<int>.Success(conta.Numero);
+            return Result<int>.Success(conta.Numero);
         }
 
-        private bool SenhaValida(string senha)
+        private Result ValidarSenha(string senha)
         {
             if (string.IsNullOrWhiteSpace(senha))
-                return false;
+                return Result.Error(ErrorType.INVALID_DOCUMENT, "Senha inválida");
 
-            return true;
+            return Result.Success();
+        }
+
+        private async Task<Result> ValidarCpf(string cpf)
+        {
+            if (!CpfValido(cpf))
+                return Result.Error(ErrorType.INVALID_DOCUMENT, "CPF inválido");
+
+            var cpfJaCadastrado = await _repository.ExistePorCpf(cpf);
+            if (cpfJaCadastrado)
+                return Result.Error(ErrorType.INVALID_DOCUMENT, "CPF já cadastrado");
+
+            return Result.Success();
         }
 
         private bool CpfValido(string cpf)
@@ -57,10 +68,38 @@ namespace ContaCorrente.API.Application.Handlers
             if (string.IsNullOrWhiteSpace(cpf))
                 return false;
 
+            // Deve ter 11 dígitos
             if (cpf.Length != 11)
                 return false;
 
-            return true;
+            // Apenas números
+            if (!cpf.All(char.IsDigit))
+                return false;
+
+            // Bloqueia CPFs com todos os dígitos iguais
+            if (cpf.Distinct().Count() == 1)
+                return false;
+
+            // Validação dos dígitos verificadores
+            var numeros = cpf.Select(c => int.Parse(c.ToString())).ToArray();
+
+            // Primeiro dígito
+            int soma = 0;
+            for (int i = 0; i < 9; i++)
+                soma += numeros[i] * (10 - i);
+
+            int resto = soma % 11;
+            int digito1 = resto < 2 ? 0 : 11 - resto;
+
+            // Segundo dígito
+            soma = 0;
+            for (int i = 0; i < 10; i++)
+                soma += numeros[i] * (11 - i);
+
+            resto = soma % 11;
+            int digito2 = resto < 2 ? 0 : 11 - resto;
+
+            return numeros[9] == digito1 && numeros[10] == digito2;
         }
     }
 }

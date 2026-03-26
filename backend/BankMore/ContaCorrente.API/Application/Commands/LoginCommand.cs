@@ -3,7 +3,7 @@ using MediatR;
 
 namespace ContaCorrente.API.Application.Commands
 {
-    public class LoginCommand : IRequest<Response<string>>
+    public class LoginCommand : IRequest<Result<string>>
     {
         public string Cpf { get; set; }
         public int? NumeroConta { get; set; }
