@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankMore.Infrastructure", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transferencia.API", "Transferencia.API\Transferencia.API.csproj", "{1DC3AE08-E894-4CD5-B956-5381D3CECFD1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContaCorrente.Tests", "ContaCorrente.Tests\ContaCorrente.Tests.csproj", "{94BC364A-5DBD-4921-82FC-078276560709}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{1DC3AE08-E894-4CD5-B956-5381D3CECFD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1DC3AE08-E894-4CD5-B956-5381D3CECFD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1DC3AE08-E894-4CD5-B956-5381D3CECFD1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94BC364A-5DBD-4921-82FC-078276560709}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94BC364A-5DBD-4921-82FC-078276560709}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94BC364A-5DBD-4921-82FC-078276560709}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94BC364A-5DBD-4921-82FC-078276560709}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -59,6 +65,7 @@ Global
 		{0D0C0042-08D6-495E-BBB9-57933709D799} = {2F32A1AB-8573-4565-8D4D-FBF433F96847}
 		{282A1A65-C325-4E76-A3BC-613D435AC39B} = {2F32A1AB-8573-4565-8D4D-FBF433F96847}
 		{1DC3AE08-E894-4CD5-B956-5381D3CECFD1} = {687BB21D-5A8C-49E7-A858-B3B4D92BD87C}
+		{94BC364A-5DBD-4921-82FC-078276560709} = {86CBFE27-3C34-469F-93F6-133955690C53}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E51459F1-A7E4-45CB-AA4D-29F86297215D}
