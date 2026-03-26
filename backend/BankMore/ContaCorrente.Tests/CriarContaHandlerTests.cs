@@ -39,7 +39,7 @@ namespace ContaCorrente.Tests
                 .Returns("senha-hash");
 
             // Act
-            var result = await _handler.Handle(request, default);
+            var result = await _handler.Handle(request, CancellationToken.None);
 
             // Assert
             result.IsSuccess.Should().BeTrue();
@@ -57,7 +57,7 @@ namespace ContaCorrente.Tests
                 Senha = "123456"
             };
 
-            var result = await _handler.Handle(request, default);
+            var result = await _handler.Handle(request, CancellationToken.None);
 
             result.IsSuccess.Should().BeFalse();
         }
@@ -74,7 +74,7 @@ namespace ContaCorrente.Tests
             _repository.Setup(x => x.ExistePorCpf(It.IsAny<string>()))
                 .ReturnsAsync(true);
 
-            var result = await _handler.Handle(request, default);
+            var result = await _handler.Handle(request, CancellationToken.None);
 
             result.IsSuccess.Should().BeFalse();
         }
@@ -91,7 +91,7 @@ namespace ContaCorrente.Tests
             _repository.Setup(x => x.ExistePorCpf(It.IsAny<string>()))
                 .ReturnsAsync(false);
 
-            var result = await _handler.Handle(request, default);
+            var result = await _handler.Handle(request, CancellationToken.None);
 
             result.IsSuccess.Should().BeFalse();
         }

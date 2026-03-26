@@ -67,7 +67,7 @@ namespace ContaCorrente.Tests
             };
 
             // Act
-            var result = await _handler.Handle(request, default);
+            var result = await _handler.Handle(request, CancellationToken.None);
 
             // Assert
             result.IsSuccess.Should().BeTrue();
@@ -81,7 +81,7 @@ namespace ContaCorrente.Tests
                 Senha = "senha"
             };
 
-            var result = await _handler.Handle(request, default);
+            var result = await _handler.Handle(request, CancellationToken.None);
 
             result.IsSuccess.Should().BeFalse();
         }
@@ -101,7 +101,7 @@ namespace ContaCorrente.Tests
                 Senha = "senha"
             };
 
-            var result = await _handler.Handle(request, default);
+            var result = await _handler.Handle(request, CancellationToken.None);
 
             result.IsSuccess.Should().BeFalse();
         }
@@ -126,7 +126,7 @@ namespace ContaCorrente.Tests
                 Senha = "senha"
             };
 
-            var result = await _handler.Handle(request, default);
+            var result = await _handler.Handle(request, CancellationToken.None);
 
             result.IsSuccess.Should().BeFalse();
         }
